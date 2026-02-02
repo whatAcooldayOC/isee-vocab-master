@@ -33,7 +33,7 @@
             display: flex;
             justify-content: space-around;
             background-color: var(--card-bg);
-            padding: 20px 0; /* Larger touch target */
+            padding: 15px 0; /* Larger touch target */
             position: fixed;
             bottom: 0;
             width: 100%;
@@ -45,22 +45,22 @@
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 1.1rem; /* Larger nav text */
+            font-size: 1rem; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
         }
 
         .nav-btn span {
-            font-size: 1.6rem; /* Larger icons */
+            font-size: 1.5rem; 
         }
 
         .nav-btn.active {
             color: var(--primary);
             font-weight: 800;
-            transform: scale(1.1); /* Pop effect */
+            transform: scale(1.1); 
             transition: transform 0.2s;
         }
 
@@ -264,15 +264,88 @@
             border-radius: 20px;
         }
 
+        /* Settings Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .settings-row {
+            margin-bottom: 20px;
+        }
+        .settings-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+        select, input[type=range] {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            background: var(--bg);
+            border: 1px solid var(--text-secondary);
+            color: var(--text);
+            font-size: 1.1rem;
+        }
+        .close-modal {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal">
+            <h2 style="margin-top:0">Audio Settings</h2>
+            
+            <div class="settings-row">
+                <label class="settings-label">Voice</label>
+                <select id="voice-select" onchange="previewVoice()">
+                    <option value="">Default</option>
+                </select>
+            </div>
+
+            <div class="settings-row">
+                <label class="settings-label">Speed: <span id="rate-val">0.9</span>x</label>
+                <input type="range" id="rate-range" min="0.5" max="1.5" step="0.1" value="0.9" oninput="updateRateLabel()" onchange="previewVoice()">
+            </div>
+
+            <button class="close-modal" onclick="toggleSettings()">Done</button>
+        </div>
+    </div>
 
     <div class="container">
         <!-- LEARN MODE -->
         <div id="view-learn" class="view active">
             <div class="header">
                 <h2>Daily Words</h2>
+                <button class="nav-btn" onclick="toggleSettings()">⚙️</button>
             </div>
             <div id="flashcard-container"></div>
             <button class="next-btn" style="display:block" onclick="renderFlashcard()">Next Word ➔</button>
@@ -323,10 +396,14 @@
             <span>📝</span>
             Sentences
         </button>
+        <button class="nav-btn" onclick="toggleSettings()">
+            <span>⚙️</span>
+            Settings
+        </button>
     </nav>
 
     <script>
-        // DATA - EXPANDED TO 100 WORDS
+        // DATA
         const iseeVocabulary = [
           { word: "Abandon", partOfSpeech: "v.", definition: "To leave behind; to give up.", synonyms: ["Desert", "Forsake", "Relinquish", "Leave"], sentence: "The sailors had to ______ the sinking ship.", correctAnswer: "abandon", level: "Middle" },
           { word: "Abundant", partOfSpeech: "adj.", definition: "Existing or available in large quantities; plentiful.", synonyms: ["Plentiful", "Copious", "Ample", "Profuse"], sentence: "The garden had an ______ supply of tomatoes this summer.", correctAnswer: "abundant", level: "Middle" },
@@ -459,18 +536,66 @@
             if(viewName === 'sentence') nextSentenceQuiz();
         };
 
+        // --- SETTINGS LOGIC ---
+        window.toggleSettings = function() {
+            const modal = document.getElementById('settings-modal');
+            const isActive = modal.classList.contains('active');
+            
+            if (!isActive) {
+                // Load voices on open
+                populateVoiceList();
+                modal.classList.add('active');
+            } else {
+                modal.classList.remove('active');
+            }
+        }
+
+        window.updateRateLabel = function() {
+            const val = document.getElementById('rate-range').value;
+            document.getElementById('rate-val').innerText = val;
+        }
+
+        function populateVoiceList() {
+            const select = document.getElementById('voice-select');
+            // Keep default option
+            select.innerHTML = '<option value="">Default System Voice</option>';
+            
+            const voices = window.speechSynthesis.getVoices();
+            voices.forEach((voice) => {
+                const option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                select.appendChild(option);
+            });
+        }
+
         // --- TTS LOGIC ---
         window.speakText = function(text) {
-            // Cancel any current speech
             window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US'; // Set to English
-            utterance.rate = 0.9;     // Slightly slower for clarity
-            utterance.pitch = 1.0;
+            utterance.rate = document.getElementById('rate-range').value;
+            
+            // Get selected voice
+            const selectedVoiceName = document.getElementById('voice-select').value;
+            if(selectedVoiceName) {
+                const voices = window.speechSynthesis.getVoices();
+                const foundVoice = voices.find(v => v.name === selectedVoiceName);
+                if(foundVoice) utterance.voice = foundVoice;
+            } else {
+                // Prefer English if no selection
+                utterance.lang = 'en-US';
+            }
             
             window.speechSynthesis.speak(utterance);
         }
+
+        window.previewVoice = function() {
+            speakText("Hello, this is a voice test.");
+        }
+
+        // Ensure voices are loaded (Chrome needs this event)
+        window.speechSynthesis.onvoiceschanged = populateVoiceList;
 
         // --- FLASHCARD LOGIC ---
         window.renderFlashcard = function() {
@@ -515,12 +640,11 @@
         window.nextSynonymQuiz = function() {
             document.getElementById('syn-next-btn').style.display = 'none';
             const target = iseeVocabulary[Math.floor(Math.random() * iseeVocabulary.length)];
-            const correctSynonym = target.synonyms[0]; // Pick first synonym as correct answer
+            const correctSynonym = target.synonyms[0]; 
             currentQuizCorrect = correctSynonym;
 
             document.getElementById('quiz-word').innerText = target.word;
 
-            // Get distractors (using random synonyms from OTHER words)
             const others = getRandomDistractors(target, 3);
             const options = [correctSynonym, ...others.map(w => w.synonyms[0])];
             
@@ -530,19 +654,15 @@
         function checkSynonymAnswer(selected, btn) {
             const optionsDiv = document.getElementById('syn-options');
             const btns = optionsDiv.getElementsByClassName('option-btn');
-            
-            // Disable all
             for(let b of btns) b.disabled = true;
 
             if (selected === currentQuizCorrect) {
                 btn.classList.add('correct');
                 streak++;
                 document.getElementById('syn-streak').innerText = streak;
-                // Auto play sound on correct
                 speakText("Correct!");
             } else {
                 btn.classList.add('wrong');
-                // Highlight correct
                 for(let b of btns) {
                     if(b.innerText === currentQuizCorrect) b.classList.add('correct');
                 }
@@ -569,7 +689,6 @@
         function checkSentenceAnswer(selected, btn) {
             const optionsDiv = document.getElementById('sen-options');
             const btns = optionsDiv.getElementsByClassName('option-btn');
-            
             for(let b of btns) b.disabled = true;
 
             if (selected.toLowerCase() === currentQuizCorrect.toLowerCase()) {
