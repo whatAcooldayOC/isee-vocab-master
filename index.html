@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ISEE Vocab Master</title>
+    <style>
+        :root {
+            --primary: #6366f1; /* More vibrant indigo */
+            --bg: #0f172a;      /* Darker slate */
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        body {
+            /* Base font size increased significantly */
+            font-size: 18px; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--card-bg);
+            padding: 20px 0; /* Larger touch target */
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.1rem; /* Larger nav text */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .nav-btn span {
+            font-size: 1.6rem; /* Larger icons */
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+            font-weight: 800;
+            transform: scale(1.1); /* Pop effect */
+            transition: transform 0.2s;
+        }
+
+        /* Content Area */
+        .container {
+            flex: 1;
+            padding: 25px;
+            padding-bottom: 100px; /* More space for larger nav */
+            overflow-y: auto;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically for focus */
+        }
+
+        /* Views */
+        .view {
+            display: none;
+            animation: zoomIn 0.3s ease-out;
+            width: 100%;
+        }
+        .view.active {
+            display: block;
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 24px; /* Rounder corners */
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .word-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .word-title {
+            font-size: 3.2rem; /* Massive word title */
+            font-weight: 800;
+            margin: 0;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+
+        .speak-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--text);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: background 0.2s;
+        }
+        .speak-btn:active {
+            background: var(--primary);
+        }
+
+        .part-speech {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 25px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .definition {
+            font-size: 1.5rem; /* Larger reading text */
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .synonym-box {
+            background-color: rgba(99, 102, 241, 0.15); /* More visible bg */
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+        }
+
+        .synonym-label {
+            font-size: 0.9rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .synonym-list {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Quiz Styles */
+        .quiz-question {
+            font-size: 1.6rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .option-btn {
+            background-color: var(--card-bg);
+            border: 3px solid rgba(255,255,255,0.1); /* Thicker border */
+            color: var(--text);
+            padding: 20px;
+            border-radius: 16px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:active {
+            transform: scale(0.96);
+            border-color: var(--text-secondary);
+        }
+
+        .option-btn.correct {
+            border-color: var(--success);
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #6EE7B7;
+        }
+
+        .option-btn.wrong {
+            border-color: var(--error);
+            background-color: rgba(239, 68, 68, 0.2);
+            opacity: 0.6;
+        }
+
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 20px 30px; /* Bigger button */
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-top: 30px;
+            width: 100%;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.5);
+            transition: transform 0.2s;
+        }
+        
+        .next-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Progress Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .header h2 {
+            font-size: 1.8rem;
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .streak {
+            font-size: 1.4rem;
+            color: #FCD34D;
+            font-weight: bold;
+            background: rgba(252, 211, 77, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- LEARN MODE -->
+        <div id="view-learn" class="view active">
+            <div class="header">
+                <h2>Daily Words</h2>
+            </div>
+            <div id="flashcard-container"></div>
+            <button class="next-btn" style="display:block" onclick="renderFlashcard()">Next Word ➔</button>
+        </div>
+
+        <!-- SYNONYM QUIZ -->
+        <div id="view-synonym" class="view">
+            <div class="header">
+                <h2>Synonym Match</h2>
+                <span class="streak">🔥 <span id="syn-streak">0</span></span>
+            </div>
+            <div class="card">
+                <p class="part-speech" style="margin-bottom:10px">Select the best synonym for:</p>
+                <div class="word-header" style="margin-bottom:0">
+                    <h1 class="word-title" id="quiz-word">...</h1>
+                    <button class="speak-btn" onclick="speakText(document.getElementById('quiz-word').innerText)">🔊</button>
+                </div>
+            </div>
+            <div class="options-grid" id="syn-options"></div>
+            <button class="next-btn" id="syn-next-btn" onclick="nextSynonymQuiz()">Next Question ➔</button>
+        </div>
+
+        <!-- SENTENCE QUIZ -->
+        <div id="view-sentence" class="view">
+            <div class="header">
+                <h2>Completion</h2>
+                <span class="streak">🔥 <span id="sen-streak">0</span></span>
+            </div>
+            <div class="card">
+                <p class="quiz-question" id="sen-question">...</p>
+                <button class="speak-btn" style="margin: 0 auto" onclick="speakText(document.getElementById('sen-question').innerText)">🔊 Listen</button>
+            </div>
+            <div class="options-grid" id="sen-options"></div>
+            <button class="next-btn" id="sen-next-btn" onclick="nextSentenceQuiz()">Next Question ➔</button>
+        </div>
+    </div>
+
+    <nav class="nav">
+        <button class="nav-btn active" onclick="switchView('learn', this)">
+            <span>📚</span>
+            Learn
+        </button>
+        <button class="nav-btn" onclick="switchView('synonym', this)">
+            <span>🔗</span>
+            Synonyms
+        </button>
+        <button class="nav-btn" onclick="switchView('sentence', this)">
+            <span>📝</span>
+            Sentences
+        </button>
+    </nav>
+
+    <script>
+        // DATA
+        const iseeVocabulary = [
+          {
+            word: "Abate",
+            partOfSpeech: "v.",
+            definition: "To become less active, less intense, or less in amount.",
+            synonyms: ["Subside", "Decrease", "Wane", "Diminish"],
+            sentence: "As the hurricane's winds began to ______, the villagers emerged from their shelters.",
+            correctAnswer: "abate",
+            level: "Upper"
+          },
+          {
+            word: "Benevolent",
+            partOfSpeech: "adj.",
+            definition: "Well meaning and kindly.",
+            synonyms: ["Kind", "Generous", "Altruistic", "Benign"],
+            sentence: "The ______ donor gave millions to the hospital anonymously.",
+            correctAnswer: "benevolent",
+            level: "Middle/Upper"
+          },
+          {
+            word: "Candid",
+            partOfSpeech: "adj.",
+            definition: "Truthful and straightforward; frank.",
+            synonyms: ["Frank", "Honest", "Outspoken", "Blunt"],
+            sentence: "The politician gave a ______ interview about his past mistakes, surprising everyone with his honesty.",
+            correctAnswer: "candid",
+            level: "Middle"
+          },
+          {
+            word: "Diligent",
+            partOfSpeech: "adj.",
+            definition: "Having or showing care and conscientiousness in one's work.",
+            synonyms: ["Industrious", "Hardworking", "Assiduous", "Meticulous"],
+            sentence: "Only the most ______ students finished the complex project on time.",
+            correctAnswer: "diligent",
+            level: "Lower/Middle"
+          },
+          {
+            word: "Emulate",
+            partOfSpeech: "v.",
+            definition: "Match or surpass (a person or achievement), typically by imitation.",
+            synonyms: ["Imitate", "Copy", "Mirror", "Mimic"],
+            sentence: "Young athletes often try to ______ their sports heroes.",
+            correctAnswer: "emulate",
+            level: "Upper"
+          },
+          {
+            word: "Frugal",
+            partOfSpeech: "adj.",
+            definition: "Sparing or economical with regard to money or food.",
+            synonyms: ["Thrifty", "Economical", "Prudent", "Parsimonious"],
+            sentence: "By being ______ and saving every penny, she was able to buy a house at a young age.",
+            correctAnswer: "frugal",
+            level: "Upper"
+          },
+          {
+            word: "Garrulous",
+            partOfSpeech: "adj.",
+            definition: "Excessively talkative, especially on trivial matters.",
+            synonyms: ["Talkative", "Loquacious", "Voluble", "Chatty"],
+            sentence: "The ______ old man would talk for hours to anyone who would listen.",
+            correctAnswer: "garrulous",
+            level: "Upper"
+          },
+          {
+            word: "Haughty",
+            partOfSpeech: "adj.",
+            definition: "Arrogantly superior and disdainful.",
+            synonyms: ["Arrogant", "Proud", "Conceited", "Pompous"],
+            sentence: "The queen dismissed the servant with a ______ wave of her hand.",
+            correctAnswer: "haughty",
+            level: "Middle/Upper"
+          },
+          {
+            word: "Inevitably",
+            partOfSpeech: "adv.",
+            definition: "As is certain to happen; unavoidably.",
+            synonyms: ["Unavoidably", "Naturally", "Necessarily", "Surely"],
+            sentence: "War ______ leads to suffering for innocent civilians.",
+            correctAnswer: "inevitably",
+            level: "Lower/Middle"
+          },
+          {
+            word: "Jubilant",
+            partOfSpeech: "adj.",
+            definition: "Feeling or expressing great happiness and triumph.",
+            synonyms: ["Overjoyed", "Exultant", "Triumphant", "Ecstatic"],
+            sentence: "The ______ crowd cheered wildly as their team won the championship.",
+            correctAnswer: "jubilant",
+            level: "Middle"
+          }
+        ];
+
+        // State
+        let currentWordIndex = 0;
+        let streak = 0;
+        let currentQuizCorrect = "";
+
+        // Global functions for HTML onclick access
+        window.switchView = function(viewName, btnElement) {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewName).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+
+            if(viewName === 'synonym') nextSynonymQuiz();
+            if(viewName === 'sentence') nextSentenceQuiz();
+        };
+
+        // --- TTS LOGIC ---
+        window.speakText = function(text) {
+            // Cancel any current speech
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US'; // Set to English
+            utterance.rate = 0.9;     // Slightly slower for clarity
+            utterance.pitch = 1.0;
+            
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- FLASHCARD LOGIC ---
+        window.renderFlashcard = function() {
+            const word = iseeVocabulary[currentWordIndex % iseeVocabulary.length];
+            const container = document.getElementById('flashcard-container');
+            
+            // Auto-pronounce on load? Maybe annoying. Let's keep it manual.
+            
+            container.innerHTML = `
+                <div class="card">
+                    <div class="word-header">
+                        <h1 class="word-title">${word.word}</h1>
+                        <button class="speak-btn" onclick="speakText('${word.word}')">🔊</button>
+                    </div>
+                    <span class="part-speech">${word.partOfSpeech} • ${word.level} ISEE</span>
+                    <p class="definition">${word.definition}</p>
+                    <div class="synonym-box">
+                        <span class="synonym-label">ISEE Synonyms</span>
+                        <div class="synonym-list">${word.synonyms.join(', ')}</div>
+                    </div>
+                </div>
+            `;
+            currentWordIndex++;
+        }
+
+        // --- UTILS ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function getRandomDistractors(correctWordObj, count) {
+            const distractors = iseeVocabulary
+                .filter(w => w.word !== correctWordObj.word)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, count);
+            return distractors;
+        }
+
+        // --- SYNONYM QUIZ ---
+        window.nextSynonymQuiz = function() {
+            document.getElementById('syn-next-btn').style.display = 'none';
+            const target = iseeVocabulary[Math.floor(Math.random() * iseeVocabulary.length)];
+            const correctSynonym = target.synonyms[0]; // Pick first synonym as correct answer
+            currentQuizCorrect = correctSynonym;
+
+            document.getElementById('quiz-word').innerText = target.word;
+
+            // Get distractors (using random synonyms from OTHER words)
+            const others = getRandomDistractors(target, 3);
+            const options = [correctSynonym, ...others.map(w => w.synonyms[0])];
+            
+            renderOptions('syn-options', shuffleArray(options), checkSynonymAnswer);
+        }
+
+        function checkSynonymAnswer(selected, btn) {
+            const optionsDiv = document.getElementById('syn-options');
+            const btns = optionsDiv.getElementsByClassName('option-btn');
+            
+            // Disable all
+            for(let b of btns) b.disabled = true;
+
+            if (selected === currentQuizCorrect) {
+                btn.classList.add('correct');
+                streak++;
+                document.getElementById('syn-streak').innerText = streak;
+                // Auto play sound on correct
+                speakText("Correct!");
+            } else {
+                btn.classList.add('wrong');
+                // Highlight correct
+                for(let b of btns) {
+                    if(b.innerText === currentQuizCorrect) b.classList.add('correct');
+                }
+                streak = 0;
+                document.getElementById('syn-streak').innerText = streak;
+            }
+            document.getElementById('syn-next-btn').style.display = 'block';
+        }
+
+        // --- SENTENCE QUIZ ---
+        window.nextSentenceQuiz = function() {
+            document.getElementById('sen-next-btn').style.display = 'none';
+            const target = iseeVocabulary[Math.floor(Math.random() * iseeVocabulary.length)];
+            currentQuizCorrect = target.word;
+
+            document.getElementById('sen-question').innerText = target.sentence;
+
+            const others = getRandomDistractors(target, 3);
+            const options = [target.word, ...others.map(w => w.word)];
+
+            renderOptions('sen-options', shuffleArray(options), checkSentenceAnswer);
+        }
+
+        function checkSentenceAnswer(selected, btn) {
+            const optionsDiv = document.getElementById('sen-options');
+            const btns = optionsDiv.getElementsByClassName('option-btn');
+            
+            for(let b of btns) b.disabled = true;
+
+            if (selected.toLowerCase() === currentQuizCorrect.toLowerCase()) {
+                btn.classList.add('correct');
+                streak++;
+                document.getElementById('sen-streak').innerText = streak;
+                speakText("Correct!");
+            } else {
+                btn.classList.add('wrong');
+                for(let b of btns) {
+                    if(b.innerText.toLowerCase() === currentQuizCorrect.toLowerCase()) b.classList.add('correct');
+                }
+                streak = 0;
+                document.getElementById('sen-streak').innerText = streak;
+            }
+            document.getElementById('sen-next-btn').style.display = 'block';
+        }
+
+        function renderOptions(containerId, options, callback) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => callback(opt, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        // Init
+        renderFlashcard();
+    </script>
+</body>
+</html>
