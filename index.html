@@ -13,10 +13,10 @@
             --text-secondary: #94a3b8;
             --success: #10B981;
             --error: #EF4444;
+            --warning: #F59E0B;
         }
 
         body {
-            /* Base font size increased significantly */
             font-size: 18px; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
@@ -33,13 +33,12 @@
             display: flex;
             justify-content: space-around;
             background-color: var(--card-bg);
-            padding: 15px 0; /* Larger touch target */
+            padding: 15px 0; 
             position: fixed;
             bottom: 0;
             width: 100%;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
             z-index: 100;
-            /* Safe area for iPhone home bar */
             padding-bottom: env(safe-area-inset-bottom, 15px);
         }
 
@@ -70,7 +69,6 @@
         .container {
             flex: 1;
             padding: 25px;
-            /* Bottom padding huge to clear fixed button */
             padding-bottom: 160px; 
             overflow-y: auto;
             max-width: 600px;
@@ -79,7 +77,7 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Align top, but padding pushes content */
+            justify-content: flex-start; 
             padding-top: 40px;
         }
 
@@ -101,13 +99,28 @@
         /* Cards */
         .card {
             background-color: var(--card-bg);
-            border-radius: 24px; /* Rounder corners */
+            border-radius: 24px; 
             padding: 30px;
             margin-bottom: 25px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             text-align: center;
             border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
         }
+
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-new { background: rgba(99, 102, 241, 0.2); color: var(--primary); }
+        .status-learning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .status-mastered { background: rgba(16, 185, 129, 0.2); color: var(--success); }
 
         .word-header {
             display: flex;
@@ -118,7 +131,7 @@
         }
 
         .word-title {
-            font-size: 3.2rem; /* Massive word title */
+            font-size: 3.2rem; 
             font-weight: 800;
             margin: 0;
             color: var(--primary);
@@ -153,14 +166,14 @@
         }
 
         .definition {
-            font-size: 1.5rem; /* Larger reading text */
+            font-size: 1.5rem; 
             line-height: 1.6;
             margin-bottom: 30px;
             font-weight: 400;
         }
 
         .synonym-box {
-            background-color: rgba(99, 102, 241, 0.15); /* More visible bg */
+            background-color: rgba(99, 102, 241, 0.15); 
             padding: 20px;
             border-radius: 16px;
             margin-top: 20px;
@@ -181,6 +194,48 @@
             font-weight: 600;
         }
 
+        /* SRS Buttons Container */
+        .srs-actions {
+            position: fixed;
+            bottom: 100px;
+            left: 25px;
+            right: 25px;
+            max-width: 550px;
+            margin: 0 auto;
+            z-index: 90;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .srs-btn {
+            border: none;
+            padding: 20px;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .srs-btn:active { transform: scale(0.95); }
+
+        .btn-hard {
+            background-color: var(--card-bg);
+            border: 2px solid var(--error);
+            color: var(--error);
+        }
+        
+        .btn-easy {
+            background-color: var(--success);
+            color: white;
+        }
+
         /* Quiz Styles */
         .quiz-question {
             font-size: 1.6rem;
@@ -196,7 +251,7 @@
 
         .option-btn {
             background-color: var(--card-bg);
-            border: 3px solid rgba(255,255,255,0.1); /* Thicker border */
+            border: 3px solid rgba(255,255,255,0.1); 
             color: var(--text);
             padding: 20px;
             border-radius: 16px;
@@ -225,34 +280,25 @@
             opacity: 0.6;
         }
 
-        /* FIXED NEXT BUTTON */
         .next-btn {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 20px 30px; /* Bigger button */
+            padding: 20px 30px;
             border-radius: 50px;
             font-size: 1.3rem;
             font-weight: 800;
-            
-            /* FIXED POSITIONING */
             position: fixed;
-            bottom: 100px; /* Above nav bar (approx 80px + padding) */
+            bottom: 100px;
             left: 25px;
             right: 25px;
-            width: auto; /* Take available width minus left/right */
-            max-width: 550px; /* Cap width on desktop */
-            margin: 0 auto; /* Center if max-width hit */
+            width: auto;
+            max-width: 550px;
+            margin: 0 auto;
             z-index: 90;
-            
             cursor: pointer;
             display: none;
             box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.5);
-            transition: transform 0.2s, opacity 0.2s;
-        }
-        
-        .next-btn:active {
-            transform: scale(0.98);
         }
 
         /* Progress Header */
@@ -289,9 +335,7 @@
             align-items: center;
             padding: 20px;
         }
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
         .modal {
             background: var(--card-bg);
             padding: 30px;
@@ -299,34 +343,16 @@
             width: 100%;
             max-width: 400px;
         }
-        .settings-row {
-            margin-bottom: 20px;
-        }
-        .settings-label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: var(--text-secondary);
-        }
+        .settings-row { margin-bottom: 20px; }
+        .settings-label { display: block; margin-bottom: 10px; font-weight: bold; color: var(--text-secondary); }
         select, input[type=range] {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            background: var(--bg);
-            border: 1px solid var(--text-secondary);
-            color: var(--text);
-            font-size: 1.1rem;
+            width: 100%; padding: 15px; border-radius: 12px;
+            background: var(--bg); border: 1px solid var(--text-secondary);
+            color: var(--text); font-size: 1.1rem;
         }
         .close-modal {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
+            background: var(--primary); color: white; border: none; padding: 15px;
+            width: 100%; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
         }
 
     </style>
@@ -336,20 +362,18 @@
     <!-- SETTINGS MODAL -->
     <div id="settings-modal" class="modal-overlay">
         <div class="modal">
-            <h2 style="margin-top:0">Audio Settings</h2>
-            
+            <h2 style="margin-top:0">Settings</h2>
             <div class="settings-row">
                 <label class="settings-label">Voice</label>
-                <select id="voice-select" onchange="previewVoice()">
-                    <option value="">Default</option>
-                </select>
+                <select id="voice-select" onchange="previewVoice()"><option value="">Default</option></select>
             </div>
-
             <div class="settings-row">
                 <label class="settings-label">Speed: <span id="rate-val">0.9</span>x</label>
                 <input type="range" id="rate-range" min="0.5" max="1.5" step="0.1" value="0.9" oninput="updateRateLabel()" onchange="previewVoice()">
             </div>
-
+            <div class="settings-row">
+                <button class="nav-btn" style="width:100%; border: 1px solid var(--error); color: var(--error); border-radius: 12px; padding: 10px;" onclick="resetProgress()">⚠️ Reset Progress</button>
+            </div>
             <button class="close-modal" onclick="toggleSettings()">Done</button>
         </div>
     </div>
@@ -362,7 +386,18 @@
                 <button class="nav-btn" onclick="toggleSettings()">⚙️</button>
             </div>
             <div id="flashcard-container"></div>
-            <button class="next-btn" style="display:block" onclick="renderFlashcard()">Next Word ➔</button>
+            
+            <!-- SRS Buttons -->
+            <div class="srs-actions">
+                <button class="srs-btn btn-hard" onclick="handleSRS('hard')">
+                    <span>❌ Hard</span>
+                    <span style="font-size:0.8rem; font-weight:400; opacity:0.8">Review soon</span>
+                </button>
+                <button class="srs-btn btn-easy" onclick="handleSRS('easy')">
+                    <span>✅ Easy</span>
+                    <span style="font-size:0.8rem; font-weight:400; opacity:0.8">Master it</span>
+                </button>
+            </div>
         </div>
 
         <!-- SYNONYM QUIZ -->
@@ -398,26 +433,14 @@
     </div>
 
     <nav class="nav">
-        <button class="nav-btn active" onclick="switchView('learn', this)">
-            <span>📚</span>
-            Learn
-        </button>
-        <button class="nav-btn" onclick="switchView('synonym', this)">
-            <span>🔗</span>
-            Synonyms
-        </button>
-        <button class="nav-btn" onclick="switchView('sentence', this)">
-            <span>📝</span>
-            Sentences
-        </button>
-        <button class="nav-btn" onclick="toggleSettings()">
-            <span>⚙️</span>
-            Settings
-        </button>
+        <button class="nav-btn active" onclick="switchView('learn', this)"><span>📚</span>Learn</button>
+        <button class="nav-btn" onclick="switchView('synonym', this)"><span>🔗</span>Quiz 1</button>
+        <button class="nav-btn" onclick="switchView('sentence', this)"><span>📝</span>Quiz 2</button>
+        <button class="nav-btn" onclick="toggleSettings()"><span>⚙️</span>Settings</button>
     </nav>
 
     <script>
-        // DATA
+        // --- DATA (Truncated for brevity in edit, full list assumed) ---
         const iseeVocabulary = [
           { word: "Abandon", partOfSpeech: "v.", definition: "To leave behind; to give up.", synonyms: ["Desert", "Forsake", "Relinquish", "Leave"], sentence: "The sailors had to ______ the sinking ship.", correctAnswer: "abandon", level: "Middle" },
           { word: "Abundant", partOfSpeech: "adj.", definition: "Existing or available in large quantities; plentiful.", synonyms: ["Plentiful", "Copious", "Ample", "Profuse"], sentence: "The garden had an ______ supply of tomatoes this summer.", correctAnswer: "abundant", level: "Middle" },
@@ -533,12 +556,106 @@
           { word: "Innovation", partOfSpeech: "n.", definition: "The action or process of innovating.", synonyms: ["Change", "Invention", "Improvement", "Novelty"], sentence: "Technological ______ has changed how we live.", correctAnswer: "innovation", level: "Middle" }
         ];
 
+        // --- PROGRESS MANAGER (SRS Logic) ---
+        class ProgressManager {
+            constructor() {
+                this.storageKey = 'isee_vocab_progress_v1';
+                this.progress = this.load();
+            }
+
+            load() {
+                const stored = localStorage.getItem(this.storageKey);
+                return stored ? JSON.parse(stored) : {};
+            }
+
+            save() {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.progress));
+            }
+
+            // Status: 'new' | 'learning' | 'mastered'
+            getWordStatus(word) {
+                if (!this.progress[word]) return 'new';
+                return this.progress[word].status;
+            }
+
+            updateWord(word, result) {
+                // result: 'hard' (or wrong quiz) | 'easy' (or correct quiz)
+                if (!this.progress[word]) {
+                    this.progress[word] = { status: 'new', streak: 0, nextReview: 0 };
+                }
+
+                const entry = this.progress[word];
+                const now = Date.now();
+
+                if (result === 'hard') {
+                    entry.status = 'learning';
+                    entry.streak = 0;
+                    entry.nextReview = now + (5 * 60 * 1000); // 5 mins
+                } else if (result === 'easy') {
+                    entry.streak += 1;
+                    entry.status = 'mastered';
+                    
+                    // Simple exponential backoff: 1 day * 2^streak
+                    // But maxing at 14 days for this simple app
+                    const days = Math.min(Math.pow(2, entry.streak - 1), 14);
+                    entry.nextReview = now + (days * 24 * 60 * 60 * 1000);
+                }
+
+                this.save();
+                return entry;
+            }
+
+            getNextWord() {
+                const now = Date.now();
+                
+                // 1. Find candidates (Learning > New > Mastered due)
+                const candidates = iseeVocabulary.map(item => {
+                    const prog = this.progress[item.word] || { status: 'new', nextReview: 0 };
+                    let weight = 0;
+
+                    if (prog.status === 'learning') weight = 100;
+                    else if (prog.status === 'new') weight = 20;
+                    else if (prog.status === 'mastered' && now >= prog.nextReview) weight = 50; // Due review
+                    else weight = 0; // Not due
+
+                    return { item, weight };
+                }).filter(c => c.weight > 0);
+
+                // If no candidates (all mastered and not due), pick a random mastered one just for practice (low weight)
+                if (candidates.length === 0) {
+                    const fallback = iseeVocabulary[Math.floor(Math.random() * iseeVocabulary.length)];
+                    return fallback;
+                }
+
+                // Weighted random selection
+                const totalWeight = candidates.reduce((sum, c) => sum + c.weight, 0);
+                let random = Math.random() * totalWeight;
+                
+                for (const candidate of candidates) {
+                    random -= candidate.weight;
+                    if (random <= 0) return candidate.item;
+                }
+                
+                return candidates[0].item;
+            }
+            
+            reset() {
+                if(confirm("Reset all learning progress?")) {
+                    this.progress = {};
+                    this.save();
+                    location.reload();
+                }
+            }
+        }
+
+        const pm = new ProgressManager();
+
         // State
-        let currentWordIndex = 0;
+        let currentWordObj = null;
         let streak = 0;
         let currentQuizCorrect = "";
 
-        // Global functions for HTML onclick access
+        // Global functions
         window.switchView = function(viewName, btnElement) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + viewName).classList.add('active');
@@ -550,30 +667,18 @@
             if(viewName === 'sentence') nextSentenceQuiz();
         };
 
-        // --- SETTINGS LOGIC ---
+        // --- SETTINGS ---
         window.toggleSettings = function() {
             const modal = document.getElementById('settings-modal');
             const isActive = modal.classList.contains('active');
-            
-            if (!isActive) {
-                // Load voices on open
-                populateVoiceList();
-                modal.classList.add('active');
-            } else {
-                modal.classList.remove('active');
-            }
+            if (!isActive) { populateVoiceList(); modal.classList.add('active'); }
+            else { modal.classList.remove('active'); }
         }
-
-        window.updateRateLabel = function() {
-            const val = document.getElementById('rate-range').value;
-            document.getElementById('rate-val').innerText = val;
-        }
-
+        window.resetProgress = () => pm.reset();
+        window.updateRateLabel = function() { document.getElementById('rate-val').innerText = document.getElementById('rate-range').value; }
         function populateVoiceList() {
             const select = document.getElementById('voice-select');
-            // Keep default option
             select.innerHTML = '<option value="">Default System Voice</option>';
-            
             const voices = window.speechSynthesis.getVoices();
             voices.forEach((voice) => {
                 const option = document.createElement('option');
@@ -583,41 +688,34 @@
             });
         }
 
-        // --- TTS LOGIC ---
+        // --- TTS ---
         window.speakText = function(text) {
             window.speechSynthesis.cancel();
-
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = document.getElementById('rate-range').value;
-            
-            // Get selected voice
             const selectedVoiceName = document.getElementById('voice-select').value;
             if(selectedVoiceName) {
                 const voices = window.speechSynthesis.getVoices();
                 const foundVoice = voices.find(v => v.name === selectedVoiceName);
                 if(foundVoice) utterance.voice = foundVoice;
-            } else {
-                // Prefer English if no selection
-                utterance.lang = 'en-US';
-            }
-            
+            } else { utterance.lang = 'en-US'; }
             window.speechSynthesis.speak(utterance);
         }
-
-        window.previewVoice = function() {
-            speakText("Hello, this is a voice test.");
-        }
-
-        // Ensure voices are loaded (Chrome needs this event)
+        window.previewVoice = function() { speakText("Hello, this is a voice test."); }
         window.speechSynthesis.onvoiceschanged = populateVoiceList;
 
-        // --- FLASHCARD LOGIC ---
+        // --- LEARN LOGIC ---
         window.renderFlashcard = function() {
-            const word = iseeVocabulary[currentWordIndex % iseeVocabulary.length];
-            const container = document.getElementById('flashcard-container');
+            const word = pm.getNextWord();
+            currentWordObj = word;
             
+            const status = pm.getWordStatus(word.word);
+            const statusClass = `status-${status}`;
+            
+            const container = document.getElementById('flashcard-container');
             container.innerHTML = `
-                <div class="card">
+                <div class="card" style="border-color: ${status === 'learning' ? 'var(--warning)' : 'transparent'}">
+                    <div class="status-badge ${statusClass}">${status}</div>
                     <div class="word-header">
                         <h1 class="word-title">${word.word}</h1>
                         <button class="speak-btn" onclick="speakText('${word.word}')">🔊</button>
@@ -630,7 +728,12 @@
                     </div>
                 </div>
             `;
-            currentWordIndex++;
+        }
+        
+        window.handleSRS = function(result) {
+            if(!currentWordObj) return;
+            pm.updateWord(currentWordObj.word, result);
+            renderFlashcard(); // Next
         }
 
         // --- UTILS ---
@@ -641,33 +744,27 @@
             }
             return array;
         }
-
         function getRandomDistractors(correctWordObj, count) {
-            const distractors = iseeVocabulary
-                .filter(w => w.word !== correctWordObj.word)
-                .sort(() => 0.5 - Math.random())
-                .slice(0, count);
-            return distractors;
+            return iseeVocabulary.filter(w => w.word !== correctWordObj.word).sort(() => 0.5 - Math.random()).slice(0, count);
         }
 
-        // --- SYNONYM QUIZ ---
+        // --- QUIZZES ---
         window.nextSynonymQuiz = function() {
             document.getElementById('syn-next-btn').style.display = 'none';
-            const target = iseeVocabulary[Math.floor(Math.random() * iseeVocabulary.length)];
+            // Quiz also uses weighted random!
+            const target = pm.getNextWord();
+            currentWordObj = target;
             const correctSynonym = target.synonyms[0]; 
             currentQuizCorrect = correctSynonym;
 
             document.getElementById('quiz-word').innerText = target.word;
-
             const others = getRandomDistractors(target, 3);
             const options = [correctSynonym, ...others.map(w => w.synonyms[0])];
-            
             renderOptions('syn-options', shuffleArray(options), checkSynonymAnswer);
         }
 
         function checkSynonymAnswer(selected, btn) {
-            const optionsDiv = document.getElementById('syn-options');
-            const btns = optionsDiv.getElementsByClassName('option-btn');
+            const btns = document.getElementById('syn-options').getElementsByClassName('option-btn');
             for(let b of btns) b.disabled = true;
 
             if (selected === currentQuizCorrect) {
@@ -675,34 +772,31 @@
                 streak++;
                 document.getElementById('syn-streak').innerText = streak;
                 speakText("Correct!");
+                pm.updateWord(currentWordObj.word, 'easy'); // Mark as learned
             } else {
                 btn.classList.add('wrong');
-                for(let b of btns) {
-                    if(b.innerText === currentQuizCorrect) b.classList.add('correct');
-                }
+                for(let b of btns) if(b.innerText === currentQuizCorrect) b.classList.add('correct');
                 streak = 0;
                 document.getElementById('syn-streak').innerText = streak;
+                pm.updateWord(currentWordObj.word, 'hard'); // Mark as hard/learning
             }
             document.getElementById('syn-next-btn').style.display = 'block';
         }
 
-        // --- SENTENCE QUIZ ---
         window.nextSentenceQuiz = function() {
             document.getElementById('sen-next-btn').style.display = 'none';
-            const target = iseeVocabulary[Math.floor(Math.random() * iseeVocabulary.length)];
+            const target = pm.getNextWord();
+            currentWordObj = target;
             currentQuizCorrect = target.word;
 
             document.getElementById('sen-question').innerText = target.sentence;
-
             const others = getRandomDistractors(target, 3);
             const options = [target.word, ...others.map(w => w.word)];
-
             renderOptions('sen-options', shuffleArray(options), checkSentenceAnswer);
         }
 
         function checkSentenceAnswer(selected, btn) {
-            const optionsDiv = document.getElementById('sen-options');
-            const btns = optionsDiv.getElementsByClassName('option-btn');
+            const btns = document.getElementById('sen-options').getElementsByClassName('option-btn');
             for(let b of btns) b.disabled = true;
 
             if (selected.toLowerCase() === currentQuizCorrect.toLowerCase()) {
@@ -710,13 +804,13 @@
                 streak++;
                 document.getElementById('sen-streak').innerText = streak;
                 speakText("Correct!");
+                pm.updateWord(currentWordObj.word, 'easy');
             } else {
                 btn.classList.add('wrong');
-                for(let b of btns) {
-                    if(b.innerText.toLowerCase() === currentQuizCorrect.toLowerCase()) b.classList.add('correct');
-                }
+                for(let b of btns) if(b.innerText.toLowerCase() === currentQuizCorrect.toLowerCase()) b.classList.add('correct');
                 streak = 0;
                 document.getElementById('sen-streak').innerText = streak;
+                pm.updateWord(currentWordObj.word, 'hard');
             }
             document.getElementById('sen-next-btn').style.display = 'block';
         }
