@@ -39,6 +39,8 @@
             width: 100%;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
             z-index: 100;
+            /* Safe area for iPhone home bar */
+            padding-bottom: env(safe-area-inset-bottom, 15px);
         }
 
         .nav-btn {
@@ -68,7 +70,8 @@
         .container {
             flex: 1;
             padding: 25px;
-            padding-bottom: 100px; /* More space for larger nav */
+            /* Bottom padding huge to clear fixed button */
+            padding-bottom: 160px; 
             overflow-y: auto;
             max-width: 600px;
             margin: 0 auto;
@@ -76,7 +79,8 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Center vertically for focus */
+            justify-content: flex-start; /* Align top, but padding pushes content */
+            padding-top: 40px;
         }
 
         /* Views */
@@ -221,6 +225,7 @@
             opacity: 0.6;
         }
 
+        /* FIXED NEXT BUTTON */
         .next-btn {
             background-color: var(--primary);
             color: white;
@@ -229,12 +234,21 @@
             border-radius: 50px;
             font-size: 1.3rem;
             font-weight: 800;
-            margin-top: 30px;
-            width: 100%;
+            
+            /* FIXED POSITIONING */
+            position: fixed;
+            bottom: 100px; /* Above nav bar (approx 80px + padding) */
+            left: 25px;
+            right: 25px;
+            width: auto; /* Take available width minus left/right */
+            max-width: 550px; /* Cap width on desktop */
+            margin: 0 auto; /* Center if max-width hit */
+            z-index: 90;
+            
             cursor: pointer;
             display: none;
             box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.5);
-            transition: transform 0.2s;
+            transition: transform 0.2s, opacity 0.2s;
         }
         
         .next-btn:active {
